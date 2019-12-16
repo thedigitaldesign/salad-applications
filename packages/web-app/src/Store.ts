@@ -47,6 +47,9 @@ export class RootStore {
 
   private machineInfoHeartbeat?: NodeJS.Timeout
 
+  // This is public because when it's set to private TS doesn't see it being used
+  public gpuInfoHeartbeat?: NodeJS.Timeout
+
   constructor(readonly axios: AxiosInstance) {
     this.routing = new RouterStore()
     this.xp = new ExperienceStore(this, axios)
@@ -64,6 +67,7 @@ export class RootStore {
     this.analytics = new AnalyticsStore(this)
 
     this.machineInfoHeartbeat = setInterval(this.tryRegisterMachine, 20000)
+    this.gpuInfoHeartbeat = setInterval(this.native.getGPUInfo, 10000)
 
     this.tryRegisterMachine()
   }

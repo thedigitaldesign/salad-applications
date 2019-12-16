@@ -77,6 +77,9 @@ class Config {
   public readonly auth0ClientId: string = requiredString('REACT_APP_AUTH0_CLIENT_ID')
   public readonly authRefreshRate: number = numberOrDefault('REACT_APP_AUTH_REFRESH_RATE', convertHours(4))
 
+  public readonly smartStartCountdown: number = numberOrDefault('REACT_APP_SMART_START_COUNTDOWN', convertMinutes(1))
+  public readonly smartStartGPUThreshold: number = numberOrDefault('REACT_APP_SMART_GPU_THRESHOLD', 50)
+
   public readonly mixpanelToken?: string = optionalString('REACT_APP_MIXPANEL_TOKEN')
   public readonly launchDarklyId: string = requiredString('REACT_APP_LAUNCH_DARKLY_ID')
   public readonly sentryDSN?: string = optionalString('REACT_APP_SENTRY_DSN')

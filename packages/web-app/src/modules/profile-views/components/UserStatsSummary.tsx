@@ -6,6 +6,7 @@ import i from '../../../components/elements/InfoButton/assets/i.svg'
 
 // Components
 import { StatElement, Tooltip } from '../../../components'
+import { getStore } from '../../../Store'
 
 // Packages
 import withStyles, { WithStyles } from 'react-jss'
@@ -45,6 +46,8 @@ interface Props extends WithStyles<typeof styles> {
 }
 
 class _UserStatsSummary extends Component<Props> {
+  store = getStore()
+
   render() {
     const { earningRate, miningStatus, classes } = this.props
     return (

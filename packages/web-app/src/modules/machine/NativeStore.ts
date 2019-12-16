@@ -1,10 +1,11 @@
 import { action, observable, computed, runInAction, flow } from 'mobx'
 import { RootStore } from '../../Store'
 import * as Storage from '../../Storage'
-import { MachineInfo } from './models'
+import { MachineInfo, Nvidia } from './models'
 import { AxiosInstance } from 'axios'
 
 import { Machine } from './models/Machine'
+import { Config } from '../../config'
 
 const getMachineInfo = 'get-machine-info'
 const setMachineInfo = 'set-machine-info'
@@ -16,9 +17,14 @@ const getDesktopVersion = 'get-desktop-version'
 const setDesktopVersion = 'set-desktop-version'
 const enableAutoLaunch = 'enable-auto-launch'
 const disableAutoLaunch = 'disable-auto-launch'
+const getGPUInfo = 'get-gpu-info'
+const setGPUInfo = 'set-gpu-info'
+// const enableSmartStart = 'enable-smart-start'
+// const disableSmartStart = 'disable-smart-start'
 
 const compatibilityKey = 'SKIPPED_COMPAT_CHECK'
 const AUTO_LAUNCH = 'AUTO_LAUNCH'
+const SMART_START = 'SMART_START'
 
 declare global {
   interface Window {
@@ -33,8 +39,8 @@ declare global {
 
 export class NativeStore {
   private callbacks = new Map<string, Function>()
-
   private failedCount: number = 0
+  private smartStartTimer?: NodeJS.Timeout
 
   //#region Observables
   @observable
@@ -59,7 +65,13 @@ export class NativeStore {
   public machineInfo?: MachineInfo
 
   @observable
+  public gpuInfo?: Nvidia
+
+  @observable
   public autoLaunch: boolean = true
+
+  @observable
+  public smartStart: boolean = false
 
   //#endregion
 
@@ -104,6 +116,7 @@ export class NativeStore {
       window.salad.onNative = this.onNative
 
       this.checkAutoLaunch()
+      this.checkSmartStart()
 
       this.on(setDesktopVersion, (version: string) => {
         this.setDesktopVersion(version)
@@ -111,6 +124,10 @@ export class NativeStore {
 
       this.on(setMachineInfo, (info: MachineInfo) => {
         this.setMachineInfo(info)
+      })
+
+      this.on(setGPUInfo, (info: Nvidia) => {
+        this.setGPUInfo(info)
       })
 
       this.send(getDesktopVersion)
@@ -277,12 +294,63 @@ export class NativeStore {
 
   @action
   checkAutoLaunch = () => {
-    if (window.salad.apiVersion <= 1) {
-      this.autoLaunch = false
+    this.autoLaunch = Storage.getOrSetDefault(AUTO_LAUNCH, this.autoLaunch.toString()) === 'true'
+    this.autoLaunch && this.enableAutoLaunch()
+  }
+
+  @action
+  getGPUInfo = () => {
+    if (this.smartStart) {
+      console.log('()()()( GET GPU INFO')
+      this.send(getGPUInfo)
+    }
+  }
+
+  @action
+  setGPUInfo = (info: Nvidia) => {
+    console.log('()()()( SET GPU INFO')
+    console.log('Received GPU info: ', info)
+    this.gpuInfo = info
+
+    if (+this.gpuInfo.gpu_utilization <= Config.smartStartGPUThreshold && this.smartStart) {
+      console.log('()()()( SET GPU INFO - IN THRESHOLD TIMER: ', this.smartStartTimer)
+      if (!this.smartStartTimer) {
+        console.log('()()()( SET GPU INFO - SET TIMER')
+        this.smartStartTimer = setTimeout(() => {
+          this.store.saladBowl.start()
+        }, Config.smartStartCountdown)
+      }
       return
     }
 
-    this.autoLaunch = Storage.getOrSetDefault(AUTO_LAUNCH, this.autoLaunch.toString()) === 'true'
-    this.autoLaunch && this.enableAutoLaunch()
+    if (this.smartStartTimer) {
+      console.log('()()()( CLEAR SET GPU INFO')
+      clearInterval(this.smartStartTimer)
+      this.smartStartTimer = undefined
+    }
+  }
+
+  @action
+  enableSmartStart = () => {
+    this.smartStart = true
+    Storage.setItem(SMART_START, 'true')
+  }
+
+  @action
+  disableSmartStart = () => {
+    this.smartStart = false
+    Storage.setItem(SMART_START, 'false')
+
+    if (this.smartStartTimer) {
+      console.log('()()()( disableSmartStart')
+      clearInterval(this.smartStartTimer)
+      this.smartStartTimer = undefined
+    }
+  }
+
+  @action
+  checkSmartStart = () => {
+    this.smartStart = Storage.getOrSetDefault(SMART_START, this.smartStart.toString()) === 'true'
+    this.smartStart && this.enableSmartStart()
   }
 }

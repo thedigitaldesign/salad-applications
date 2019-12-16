@@ -2,59 +2,50 @@ import React, { Component } from 'react'
 
 // Styles
 import { styles } from './ToggleSwitch.styles'
-// import css from './ToggleSwitch.module.scss'
 
 // Packages
 import withStyles, { WithStyles } from 'react-jss'
 import classnames from 'classnames'
 
 interface Props extends WithStyles<typeof styles> {
+  toggleId: string
   toggleLeft?: string | 'Off'
   toggleRight?: string | 'On'
-  toggleOn?: boolean
   toggleClick?: () => void
   disabled?: boolean
+  toggleDefault: boolean
 }
 
 class _ToggleSwitch extends Component<Props> {
-  state = {
-    toggled: this.props.toggleOn,
-  }
-
   render() {
-    const { 
-      classes, 
-      toggleLeft, 
-      toggleRight, 
-      toggleClick, 
-      disabled } = this.props
+    const { toggleId, toggleLeft, toggleRight, toggleClick, disabled, toggleDefault, classes } = this.props
 
     return (
       <>
         <input
-          id="toggle-on"
+          id={`${toggleId}-on`}
           className={classnames(classes.toggle, 'toggle-left', disabled && 'disabled')}
-          name="toggle"
+          name={toggleId}
           value="false"
           type="radio"
-          defaultChecked={!this.state.toggled}
+          defaultChecked={!toggleDefault}
           onClick={toggleClick}
           disabled={disabled}
         />
-        <label htmlFor="toggle-on" className={classnames(classes.btn, disabled && 'disabled')}>
+        <label htmlFor={`${toggleId}-on`} className={classnames(classes.btn, disabled && 'disabled')}>
           {toggleLeft}
         </label>
         <input
-          id="toggle-off"
+          id={`${toggleId}-off`}
           className={classnames(classes.toggle, 'toggle-right', disabled && 'disabled')}
-          name="toggle"
+          name={toggleId}
           value="true"
           type="radio"
-          defaultChecked={this.state.toggled}
+          defaultChecked={toggleDefault}
           onClick={toggleClick}
           disabled={disabled}
         />
-        <label htmlFor="toggle-off" className={classnames(classes.btn, disabled && 'disabled')}>
+        <label htmlFor={`${toggleId}-off`} className={classnames(classes.btn, disabled && 'disabled')}>
           {toggleRight}
         </label>
       </>

@@ -5,5 +5,5 @@ import { ToggleSwitch } from './ToggleSwitch'
 
 storiesOf('Components/ToggleSwitch', module)
   .add('ToggleSwitch', () => {
-    return <ToggleSwitch></ToggleSwitch>
+    return <ToggleSwitch toggleId={'toggler'} toggleDefault={false} />
   })

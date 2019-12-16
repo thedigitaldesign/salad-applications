@@ -133,7 +133,7 @@ export class SaladBowlStore {
     }
 
     this.sendRunningStatus()
-
+    
     this.store.analytics.trackStart()
   })
 

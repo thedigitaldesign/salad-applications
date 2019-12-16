@@ -15,6 +15,7 @@ import { PluginDefinition } from './salad-bowl/models/PluginDefinition'
 import { SaladBridgeNotificationService } from './salad-bowl/SaladBridgeNotificationService'
 import * as Sentry from '@sentry/electron'
 import { Profile } from './models/Profile'
+import { Nvidia } from './models/gpu/Nvidia'
 
 const appVersion = app.getVersion()
 
@@ -40,6 +41,7 @@ let mainWindow: BrowserWindow
 let offlineWindow: BrowserWindow
 
 let machineInfo: MachineInfo
+let gpuInfo: Nvidia
 let updateChecked = false
 
 let pluginManager: PluginManager | undefined
@@ -203,6 +205,14 @@ const createMainWindow = () => {
     app.quit()
   })
 
+  bridge.on('get-gpu-info', () => {
+    getCudaData()
+
+    if (gpuInfo) {
+      bridge.send('set-gpu-info', gpuInfo)
+    }
+  })
+
   bridge.on(start, (pluginDefinition: PluginDefinition) => {
     if (pluginManager) pluginManager.start(pluginDefinition)
   })
@@ -334,7 +344,26 @@ const getCudaData = () => {
   exec(cmd, { cwd: path }, (error, data) => {
     console.log('cuda error: ', error)
     console.log('cuda data: ', data)
+    gpuInfo = gpuInfoParser(data)
   })
+}
+
+const gpuInfoParser = (gpuData: string) => {
+  const split = gpuData.toString().split(',')
+  let name = split[4].trim()
+  name = 'GeForce' + name.split('GeForce')[1]
+  const gpu_utilization = split[6].split('%')[0].trim()
+  const memory_utilization = split[7].split('%')[0].trim()
+  const temperature = split[5].trim()
+
+  const nvidia: Nvidia = {
+    name: name,
+    gpu_utilization: gpu_utilization,
+    memory_utilization: memory_utilization,
+    temperature: temperature
+  }
+
+  return nvidia
 }
 
 checkForMultipleInstance()

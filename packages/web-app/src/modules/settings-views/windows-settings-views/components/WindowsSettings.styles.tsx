@@ -6,7 +6,12 @@ export const styles = (theme: SaladTheme) => ({
     display: 'flex',
   },
 
-  toggler: {
+  togglerAutoLaunch: {
+    flex: '0 0 auto', 
+    margin: '0 1.5rem 0 0',
+  },
+
+  togglerSmartStart: {
     flex: '0 0 auto', 
     margin: '0 1.5rem 0 0',
   },

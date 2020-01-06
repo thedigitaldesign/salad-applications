@@ -20,6 +20,7 @@ export const getGminerEthDefinition = (machine: Machine): PluginDefinition => {
     runningCheck: '.*[1-9]d* [KMG]H/s ',
     initialTimeout: 600000,
     initialRetries: 3,
+    watchdogTimeout: 900000,
     errors: [...STANDARD_ERRORS],
   }
 

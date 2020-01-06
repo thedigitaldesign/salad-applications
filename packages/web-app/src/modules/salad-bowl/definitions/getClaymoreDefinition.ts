@@ -12,6 +12,7 @@ export const getClaymoreDefinition = (machine: Machine): PluginDefinition => {
     runningCheck: 'ETH: GPU0 [1-9]+(.[0-9][0-9][0-9]?)? [KMG]h/s',
     initialTimeout: 600000,
     initialRetries: 3,
+    watchdogTimeout: 900000,
     errors: [...STANDARD_ERRORS],
   }
 

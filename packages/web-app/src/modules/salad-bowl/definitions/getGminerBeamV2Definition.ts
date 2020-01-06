@@ -18,6 +18,7 @@ export const getGminerBeamV2Definition = (machine: Machine): PluginDefinition =>
     runningCheck: 'Share Accepted',
     initialTimeout: 600000,
     initialRetries: 3,
+    watchdogTimeout: 900000,
     errors: [...STANDARD_ERRORS],
   }
 

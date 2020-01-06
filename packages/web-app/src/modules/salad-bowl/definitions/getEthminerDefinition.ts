@@ -19,6 +19,7 @@ export const getEthminerDefinition = (machine: Machine, machineInfo: MachineInfo
     runningCheck: '^m.* [KMG]h - ',
     initialTimeout: 600000,
     initialRetries: 3,
+    watchdogTimeout: 900000,
     errors: [
       ...STANDARD_ERRORS,
       // CUDA

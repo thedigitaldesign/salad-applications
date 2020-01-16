@@ -7,8 +7,7 @@ import { getStore } from '../../../Store'
 import { styles } from './Settings.styles'
 
 // UI
-import { LinkListUnstyled, MenuTitle } from '../../../components'
-import { Button } from '../../../components'
+import { LinkListUnstyled, MenuTitle, Button, Divider } from '../../../components'
 
 // Packages
 import withStyles, { WithStyles } from 'react-jss'
@@ -96,7 +95,13 @@ class _Settings extends Component<Props> {
     return (
       <Overlay>
         <div className={classnames(classes.menu, classes.menuItems)}>
-          <div>{menuItems && <LinkListUnstyled list={menuItems} onListItemClick={this.handleListItemClick} />}</div>
+          {menuItems && <LinkListUnstyled list={menuItems} onListItemClick={this.handleListItemClick} />}
+
+          <div className={classes.updateSalad}>
+            <Divider opacity={'.25'} />
+            <Button>Download Update</Button>
+            <Divider opacity={'.25'} />
+          </div>
           <div className={classes.buttonContainer}>
             <Button onClick={this.handleBugClicked}>Submit Bug</Button>
             <Button onClick={this.handleLogClicked}>{this.state.buttonToggle ? 'Logs sent' : 'Send logs'}</Button>

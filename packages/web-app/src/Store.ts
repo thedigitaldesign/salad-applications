@@ -54,6 +54,7 @@ export class RootStore {
   public readonly downloadLatest: DownloadLatestStore
 
   private machineInfoHeartbeat?: NodeJS.Timeout
+  private appVersionHeartbeat?: NodeJS.Timeout
 
   constructor(readonly axios: AxiosInstance) {
     this.routing = new RouterStore()
@@ -77,6 +78,7 @@ export class RootStore {
     this.downloadLatest = new DownloadLatestStore(axios)
 
     this.machineInfoHeartbeat = setInterval(this.tryRegisterMachine, 20000)
+    this.appVersionHeartbeat = setInterval(this.tryRegisterMachine, 3600000)
 
     this.tryRegisterMachine()
   }
@@ -99,9 +101,11 @@ export class RootStore {
     yield featureFlags.loadFeatureFlags(profile.id)
 
     if (this.machineInfoHeartbeat) clearInterval(this.machineInfoHeartbeat)
+    if (this.appVersionHeartbeat) clearInterval(this.appVersionHeartbeat)
 
     // Start a timer to keep checking for system information
     this.machineInfoHeartbeat = setInterval(this.tryRegisterMachine, 20000)
+    this.appVersionHeartbeat = setInterval(this.downloadLatest.checkVersion, 3600000)
 
     this.tryRegisterMachine()
 

@@ -60,13 +60,10 @@ export const styles = (theme: SaladTheme) => ({
   },
 
   updateSalad: {
-    marginTop: 'auto',
+    textAlign: 'center',
   },
   buttonContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    // marginTop: 'auto',
+    marginTop: 'auto',
   },
   closeButton: {
     border: 'solid 3px ' + theme.lightGreen,

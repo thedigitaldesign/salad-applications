@@ -16,6 +16,7 @@ const styles = (theme: SaladTheme) => ({
     textOverflow: 'ellipsis',
     overflow: 'hidden',
     whiteSpace: 'nowrap',
+    maxWidth: '220px',
   },
   xp: {
     fontFamily: 'sharpGroteskLight25',

@@ -118,6 +118,9 @@ class _RewardSlider extends Component<Props, State> {
   render() {
     const { title, classes, children } = this.props
     const { isHovering, isHoveringRewards } = this.state
+
+    const rewards = Array.from(document.querySelectorAll(''))
+
     return (
       <div className={classes.container} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave}>
         <div className={classes.titleContainer}>
